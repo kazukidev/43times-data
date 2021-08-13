@@ -1,0 +1,37 @@
+name: cron-deploy
+on:
+    workflow_dispatch:
+    push:
+        branches-ignore:
+            - "**"
+    schedule:
+        - cron: "30 17 * * *"
+env:
+    API_URL: ${{secrets.API_URL}}
+    TZ: "America/New_York"
+jobs:
+    generate:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v1
+              with:
+                  python-version: 3.7.11
+            - name: Install Dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+            - name: Run script
+              id: changes
+              run: |
+                  python generator.py
+                  git add -N .
+                  echo "::set-output name=count::$(git diff --name-only | wc -l)"
+            - name: Commit and Push
+              run: |
+                  git config --global user.name  "bot"
+                  git config --global user.email "bot@example.com"
+                  git add .
+                  git commit -m 'update data'
+                  git push
+              if: steps.changes.outputs.count > 0
