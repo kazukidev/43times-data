@@ -5,7 +5,8 @@ on:
         branches-ignore:
             - "**"
     schedule:
-        - cron: "30 17 * * *"
+        # UTC 20:30, 21:30 ===> JST 5:30, 6:30 (US 16:30)
+        - cron: "30 20,21,22 * * *"
 env:
     API_URL: ${{secrets.API_URL}}
     TZ: "America/New_York"
@@ -28,10 +29,13 @@ jobs:
                   git add -N .
                   echo "::set-output name=count::$(git diff --name-only | wc -l)"
             - name: Commit and Push
+              env: 
+                TZ: "Asia/Tokyo"
               run: |
+                  DATE=`date +'%Y-%m-%d %T'`
                   git config --global user.name  "bot"
                   git config --global user.email "bot@example.com"
                   git add .
-                  git commit -m 'update data'
+                  git commit -m "update: ${DATE}"
                   git push
               if: steps.changes.outputs.count > 0
