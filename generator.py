@@ -4,6 +4,7 @@ import pathlib
 import requests
 import glob
 import re
+import datetime
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -27,3 +28,16 @@ with open("data/daily.json", 'w') as output:
         _, _, year, month, date = os.path.splitext(x)[0].split("/")
         daily.append({"year": int(year), "month": int(month), "date": int(date)})
     json.dump(daily, output, indent=4, sort_keys=True)
+
+
+def getMonthly(symbol):
+    response = requests.get(os.getenv("SPREADSHEET_URL") + "?type=" + symbol).json()
+    now = datetime.datetime.now()
+    month_dirname = './data/monthly/' + str(now.year) + '/' + str(now.month)
+    pathlib.Path(month_dirname).mkdir(parents=True, exist_ok=True)
+    with open(month_dirname + '/'  + symbol + '.json', 'w') as output:
+        json.dump(response, output, sort_keys=True)
+
+
+for symbol in ['DJI', 'IXIC', 'INX', 'RUT', 'NI225', '2801']:
+    getMonthly(symbol)
