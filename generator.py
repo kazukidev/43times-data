@@ -31,11 +31,11 @@ with open("data/daily.json", 'w') as output:
 
 
 def getMonthly(symbol):
-    response = requests.get(os.getenv("SPREADSHEET_URL") + "?type=" + str(symbol)).json()
+    response = requests.get(f'{os.getenv("SPREADSHEET_URL")}?type={symbol}').json()
     now = datetime.datetime.now()
-    month_dirname = './data/monthly/' + str(now.year) + '/' + str(now.month)
+    month_dirname = f'./data/monthly/{now.year}/{now.month}' 
     pathlib.Path(month_dirname).mkdir(parents=True, exist_ok=True)
-    with open(month_dirname + '/'  + str(symbol) + '.json', 'w') as output:
+    with open(f'{month_dirname}/{symbol}.json', 'w') as output:
         json.dump(response, output, sort_keys=True)
 
 
