@@ -9,6 +9,7 @@ on:
         - cron: "30 20,21,22 * * *"
 env:
     API_URL: ${{secrets.API_URL}}
+    SPREADSHEET_URL: ${{secrets.SPREADSHEET_URL}}
     TZ: "America/New_York"
 jobs:
     generate:
