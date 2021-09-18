@@ -36,7 +36,7 @@ def getMonthly(symbol):
     month_dirname = f'./data/monthly/{now.year}/{now.month}' 
     pathlib.Path(month_dirname).mkdir(parents=True, exist_ok=True)
     with open(f'{month_dirname}/{symbol}.json', 'w') as output:
-        json.dump(response, output, sort_keys=True)
+        json.dump(response, output, indent=2, sort_keys=True)
 
 
 for symbol in ['DJI', 'IXIC', 'INX', 'RUT', 'NI225', '2801']:
