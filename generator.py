@@ -6,6 +6,9 @@ import glob
 import re
 import datetime
 
+# Get timestamp
+now = datetime.datetime.now()
+
 def atoi(text):
     return int(text) if text.isdigit() else text
 
@@ -32,12 +35,20 @@ with open("data/daily.json", 'w') as output:
 
 def getMonthly(symbol):
     response = requests.get(f'{os.getenv("SPREADSHEET_URL")}?type={symbol}').json()
-    now = datetime.datetime.now()
     month_dirname = f'./data/monthly/{now.year}/{now.month}' 
     pathlib.Path(month_dirname).mkdir(parents=True, exist_ok=True)
     with open(f'{month_dirname}/{symbol}.json', 'w') as output:
         json.dump(response, output, indent=2, sort_keys=True)
 
 
-for symbol in ['DJI', 'IXIC', 'INX', 'RUT', 'NI225', '2801']:
+symbols = ['DJI', 'IXIC', 'INX', 'RUT', 'NI225', '2801']
+for symbol in symbols:
     getMonthly(symbol)
+
+with open(f'./data/monthly/{now.year}/{now.month}/symbols.json', 'w') as output:
+    js = []
+    for s in symbols:
+        obj = {}
+        obj["name"] = s
+        js.append(obj)
+    json.dump(js, output, indent=2, sort_keys=True)
