@@ -7,7 +7,7 @@ import re
 import datetime
 
 # Get timestamp
-now = datetime.datetime.now()
+#now = datetime.datetime.now()
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -18,7 +18,11 @@ def natural_keys(text):
 
 # fetch and write the contents as json file
 response = requests.get(os.getenv("API_URL", "http://localhost:3000/api/today/property")).json()
-daily_dirname = './data/daily/' + response['date']['year'] + '/' + response['date']['month']
+
+Year =  response['date']['year'] 
+Month = response['date']['month']
+
+daily_dirname = './data/daily/' + Year + '/' + Month
 filename = response['date']['date'] + ".json"
 pathlib.Path(daily_dirname).mkdir(parents=True, exist_ok=True)
 with open(daily_dirname + '/' + filename, 'w') as output:
@@ -35,7 +39,7 @@ with open("data/daily.json", 'w') as output:
 
 def getMonthly(symbol):
     response = requests.get(f'{os.getenv("SPREADSHEET_URL")}?type={symbol}').json()
-    month_dirname = f'./data/monthly/{now.year}/{now.month}' 
+    month_dirname = f'./data/monthly/{Year}/{Month}' 
     pathlib.Path(month_dirname).mkdir(parents=True, exist_ok=True)
     with open(f'{month_dirname}/{symbol}.json', 'w') as output:
         json.dump(response, output, indent=2, sort_keys=True)
@@ -45,7 +49,7 @@ symbols = ['DJI', 'IXIC', 'INX', 'RUT', 'NI225', '2801']
 for symbol in symbols:
     getMonthly(symbol)
 
-with open(f'./data/monthly/{now.year}/{now.month}/symbols.json', 'w') as output:
+with open(f'./data/monthly/{Year}/{Month}/symbols.json', 'w') as output:
     js = []
     for s in symbols:
         obj = {}
